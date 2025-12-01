@@ -1,0 +1,106 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="ur5_with_camera">
+  <!-- 直接包含底层宏文件 -->
+  <xacro:include filename="$(find ur_description)/urdf/ur_macro.xacro" />
+  
+  <!-- 定义摄像头参数 -->
+  <xacro:arg name="camera_width" default="640"/>
+  <xacro:arg name="camera_height" default="480"/>
+  <xacro:arg name="camera_fps" default="30"/>
+  <xacro:arg name="camera_name" default="camera"/>
+
+  <!-- 定义world链接 -->
+  <link name="world" />
+
+  <!-- 实例化UR5机械臂 -->
+  <xacro:ur_robot
+    name="ur5"
+    tf_prefix=""
+    parent="world"
+    joint_limits_parameters_file="$(find ur_description)/config/ur5/joint_limits.yaml"
+    kinematics_parameters_file="$(find ur_description)/config/ur5/default_kinematics.yaml"
+    physical_parameters_file="$(find ur_description)/config/ur5/physical_parameters.yaml"
+    visual_parameters_file="$(find ur_description)/config/ur5/visual_parameters.yaml"
+    safety_limits="true"
+    safety_pos_margin="0.15"
+    safety_k_position="20"
+  >
+    <origin xyz="0 0 0" rpy="0 0 0" />
+  </xacro:ur_robot>
+
+  <!-- 在末端添加摄像头 -->
+  <!-- ✅ 修正：使用 $(arg camera_name) 而不是 ${camera_name} -->
+  <link name="$(arg camera_name)_link">
+    <visual>
+      <geometry>
+        <box size="0.03 0.03 0.01"/>
+      </geometry>
+      <material name="black">
+        <color rgba="0.1 0.1 0.1 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.03 0.03 0.01"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.01"/>
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6"/>
+    </inertial>
+  </link>
+
+  <!-- ✅ 修正：使用 $(arg camera_name) -->
+  <joint name="$(arg camera_name)_joint" type="fixed">
+    <parent link="tool0"/>
+    <child link="$(arg camera_name)_link"/>
+    <origin xyz="0.0 0.0 0.02" rpy="0 ${pi/2} 0"/>
+  </joint>
+
+  <!-- ✅ 修正：使用 $(arg camera_name) -->
+  <gazebo reference="$(arg camera_name)_link">
+    <material>Gazebo/Black</material>
+  </gazebo>
+
+  <!-- ✅ 修正：使用 $(arg camera_name) -->
+  <gazebo reference="$(arg camera_name)_link">
+    <sensor type="camera" name="$(arg camera_name)">
+      <update_rate>$(arg camera_fps)</update_rate>
+      <camera name="head">
+        <horizontal_fov>1.0471975512</horizontal_fov>
+        <image>
+          <width>$(arg camera_width)</width>
+          <height>$(arg camera_height)</height>
+          <format>R8G8B8</format>
+        </image>
+        <clip>
+          <near>0.02</near>
+          <far>300</far>
+        </clip>
+        <noise>
+          <type>gaussian</type>
+          <mean>0.0</mean>
+          <stddev>0.007</stddev>
+        </noise>
+      </camera>
+      <plugin filename="libgazebo_ros_camera.so" name="$(arg camera_name)_controller">
+        <ros>
+          <namespace>$(arg camera_name)</namespace>
+          <remapping>~/image_raw:=image_raw</remapping>
+          <remapping>~/camera_info:=camera_info</remapping>
+        </ros>
+        <camera_name>$(arg camera_name)</camera_name>
+        <frame_name>$(arg camera_name)_link</frame_name>
+        <hack_baseline>0.07</hack_baseline>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+  <gazebo>
+    <light type="point" name="point_light">
+      <pose>0 0 3 0 0 0</pose>
+      <diffuse>0.8 0.8 0.8 1</diffuse>
+      <specular>0.2 0.2 0.2 1</specular>
+    </light>
+  </gazebo>
+</robot>

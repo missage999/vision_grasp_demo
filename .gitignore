@@ -1,0 +1,41 @@
+# ROS2/Colcon build artifacts
+build/
+install/
+log/
+
+# CMake build artifacts
+cmake-build-*/
+
+# Editor files
+.vscode/
+*.swp
+*.swo
+*~
+
+# Temporary files
+*.tmp
+*.temp
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# ROS2 specific
+*.launch.py~
+*.rviz~
+*.urdf~
+*.xacro~
+
+# Local configuration files
+*.local
+*.env
+
+# Backup files
+*.bak
+*.backup
+
+# IDE files
+.idea/
+.DS_Store
+Thumbs.db
