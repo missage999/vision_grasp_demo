@@ -10,10 +10,15 @@
   <buildtool_depend>ament_cmake</buildtool_depend>
 
   <depend>ur_description</depend>
-  <depend>ur_gazebo</depend>
+  <depend>ur_simulation_gazebo</depend>
   <depend>robot_state_publisher</depend>
   <depend>gazebo_ros</depend>
   <depend>xacro</depend>
+  <depend>controller_manager</depend>
+  <depend>rviz2</depend>
+  <depend>joint_trajectory_controller</depend>
+  <depend>ur_controllers</depend>
+  <depend>joint_state_broadcaster</depend>
 
   <export>
     <build_type>ament_cmake</build_type>
