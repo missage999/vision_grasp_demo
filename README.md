@@ -29,7 +29,7 @@
 - [x] UR5基础仿真环境搭建
 - [x] 启动文件参数优化
 - [x] URDF模型文件精简
-- [ ] 相机模型集成
+- [x] 相机模型集成
 - [ ] 图像处理与目标识别算法
 - [ ] 抓取路径规划算法
 - [ ] 完整闭环测试
@@ -60,6 +60,82 @@ XACRO处理机制：XACRO在处理顶层<robot>标签时，不会应用在同一
 - 验证ur5基础仿真：`ros2 launch ur_simulation_gazebo ur_sim_control.launch.py ur_type:=ur5`
 - 验证ur5基础仿真：`ros2 launch ur_simulation_gazebo ur_sim_control.launch.py`都可以
 
+### 摄像头配置说明
+
+摄像头已成功集成到UR5机器人模型中，配置详情如下：
+
+1. **安装位置**：摄像头安装在`tool0`坐标系上，这是ROS-I标准的工具坐标系
+2. **相对位置**：位于工具中心点前方1.5厘米处（XYZ: 0.0, 0.0, 0.015）
+3. **话题名称**：
+   - 图像话题：`/image_raw`
+   - 摄像头信息话题：`/camera_info`
+4. **参数配置**：
+   - 分辨率：800x600
+   - 帧率：30Hz
+   - 水平视场角：约80度
+5. **畸变参数**：已移除默认为0的畸变参数，保持配置简洁
+
+### Gazebo显示问题说明
+
+在Gazebo中，URDF模型的材质显示需要特殊处理：
+
+1. **问题描述**：在URDF中定义的`<material>`标签在Gazebo中可能无法正确显示颜色
+2. **解决方案**：需要在`<gazebo>`标签中使用Gazebo专用的材质定义
+3. **实现方式**：
+   ```xml
+   <!-- Gazebo material for camera link -->
+   <gazebo reference="camera_link">
+     <material>Gazebo/Red</material>
+   </gazebo>
+   ```
+4. **可用材质**：Gazebo提供了多种预定义材质，如`Gazebo/Red`、`Gazebo/Blue`、`Gazebo/Green`等
+
+### 坐标系说明
+
+在ROS和机器人系统中，坐标系的定义对于正确理解传感器数据和机器人的空间关系至关重要。
+
+#### ROS标准坐标系定义
+
+**camera_link坐标系**：
+- X轴：朝前（决定图像的主要方向）
+- Y轴：朝左
+- Z轴：朝上
+- 图像方向由camera_link的X轴方向决定，只需将X轴对准需要的方向即可
+
+**camera_link_optical坐标系**：
+- Z轴：朝前（光轴方向）
+- X轴：朝右
+- Y轴：朝下
+- 相对于camera_link的变换是固定的，主要用于标准算法使用
+- 通过`<frameName>camera_link_optical</frameName>`指定，不影响图像显示方向
+
+#### UR机器人tool0标准坐标系
+
+**tool0坐标系**：
+- Z轴：朝前（工具法兰的延伸方向）
+- X轴和Y轴：按右手定则确定（通常X轴向右，Y轴向下）
+
+摄像头安装在tool0坐标系上，利用其作为末端执行器的标准参考点，有利于传感器数据对齐和后续视觉伺服控制。
+
+### RViz配置说明
+
+项目现在包含自定义的RViz配置文件，位于`rviz/ur5_with_camera.rviz`。该配置文件已在启动文件中正确引用，启动时会自动加载以下配置：
+
+1. **显示设置**：
+   - RobotModel显示机器人模型
+   - TF显示坐标变换关系
+   - Image显示摄像头图像（如果启用了摄像头）
+
+2. **摄像头图像面板**：
+   - 自动订阅`/image_raw`话题
+   - 设置合适的图像显示尺寸
+
+3. **视图设置**：
+   - 默认视角朝向机器人工作区域
+   - 适当缩放比例便于观察
+
+启动文件已修改为使用项目内的RViz配置文件，而非官方`ur_description`包中的配置文件。
+
 ## 编译运行步骤
 
 ### 编译项目
@@ -85,3 +161,6 @@ source install/setup.bash
 # 验证XACRO文件语法
 ros2 run xacro xacro install/vision_grasp_demo/share/vision_grasp_demo/urdf/ur5_with_camera.urdf.xacro name:=ur5
 ```
+
+### 查看摄像头图像（在RViz中）
+启动仿真环境后，可以在RViz中添加Image面板，订阅`/image_raw`话题查看摄像头实时图像。

@@ -37,7 +37,7 @@ def launch_setup(context, *args, **kwargs):
 
     # 固定RViz配置文件路径
     rviz_config_file = PathJoinSubstitution(
-        [FindPackageShare("ur_description"), "rviz", "view_robot.rviz"]
+        [FindPackageShare("vision_grasp_demo"), "rviz", "ur5_with_camera.rviz"]
     )
 
     robot_description_content = Command(
