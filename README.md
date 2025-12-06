@@ -17,7 +17,7 @@
 ## 视觉抓取项目总体流程与进度
 
 ### 项目总体架构
-本项目实现基于视觉的机械臂抓取功能，集成UR5机械臂与相机，在Gazebo中进行仿真测试。整体流程如下：
+本项目实现基于视觉的机械臂抓取功能，集成UR5e机械臂与相机，在Gazebo中进行仿真测试。整体流程如下：
 
 1. **环境感知**：通过相机获取环境图像信息
 2. **目标识别**：处理图像识别抓取目标物体
@@ -26,7 +26,7 @@
 5. **反馈调整**：根据传感器反馈调整抓取策略
 
 ### 当前开发进度
-- [x] UR5基础仿真环境搭建
+- [x] UR5e基础仿真环境搭建
 - [x] 启动文件参数优化
 - [x] URDF模型文件精简
 - [x] 相机模型集成
@@ -48,17 +48,17 @@ XACRO处理机制：XACRO在处理顶层<robot>标签时，不会应用在同一
 
 解决方法：虽然定义默认值是一种良好的实践，但在实际使用时仍需要显式传递参数
 
-这就是为什么即使我们定义了`<xacro:arg name="name" default="ur"/>`，在运行命令时仍然需要传递name:=ur5参数的原因。这不是我们的代码有问题，而是XACRO工具的工作方式决定的。
+这就是为什么即使我们定义了`<xacro:arg name="name" default="ur"/>`，在运行命令时仍然需要传递name:=ur5e参数的原因。这不是我们的代码有问题，而是XACRO工具的工作方式决定的。
 
 ### 正确的验证命令
 
-应该写成：ros2 run xacro xacro install/vision_grasp_demo/share/vision_grasp_demo/urdf/ur5_with_camera.urdf.xacro name:=ur5
+应该写成：ros2 run xacro xacro install/vision_grasp_demo/share/vision_grasp_demo/urdf/ur5_with_camera.urdf.xacro name:=ur5e
 
 ### 启动文件验证
 
 不过启动的时候：
-- 验证ur5基础仿真：`ros2 launch ur_simulation_gazebo ur_sim_control.launch.py ur_type:=ur5`
-- 验证ur5基础仿真：`ros2 launch ur_simulation_gazebo ur_sim_control.launch.py`都可以
+- 验证ur5e基础仿真：`ros2 launch ur_simulation_gazebo ur_sim_control.launch.py ur_type:=ur5e`
+- 验证ur5e基础仿真：`ros2 launch ur_simulation_gazebo ur_sim_control.launch.py`都可以
 
 ### 摄像头配置说明
 
@@ -149,7 +149,7 @@ colcon build --packages-select vision_grasp_demo
 # 设置环境变量
 source install/setup.bash
 
-# 启动UR5与相机仿真环境
+# 启动UR5e与相机仿真环境
 ros2 launch vision_grasp_demo ur5_camera_bringup.launch.py
 ```
 
@@ -159,7 +159,7 @@ ros2 launch vision_grasp_demo ur5_camera_bringup.launch.py
 source install/setup.bash
 
 # 验证XACRO文件语法
-ros2 run xacro xacro install/vision_grasp_demo/share/vision_grasp_demo/urdf/ur5_with_camera.urdf.xacro name:=ur5
+ros2 run xacro xacro install/vision_grasp_demo/share/vision_grasp_demo/urdf/ur5_with_camera.urdf.xacro name:=ur5e
 ```
 
 ### 查看摄像头图像（在RViz中）
