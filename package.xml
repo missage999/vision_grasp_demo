@@ -19,6 +19,9 @@
   <depend>joint_trajectory_controller</depend>
   <depend>ur_controllers</depend>
   <depend>joint_state_broadcaster</depend>
+  <depend>sensor_msgs</depend>
+  <depend>cv_bridge</depend>
+  <exec_depend>python3-opencv</exec_depend>
 
   <export>
     <build_type>ament_cmake</build_type>

@@ -7,7 +7,15 @@ endif()
 
 find_package(ament_cmake REQUIRED)
 
+# 创建可执行脚本
+install(PROGRAMS
+  src/object_detector.py
+  DESTINATION lib/${PROJECT_NAME}
+)
+
 install(DIRECTORY
+  config
+  models
   launch
   urdf
   rviz

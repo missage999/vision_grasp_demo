@@ -1,0 +1,5 @@
+object_detector:
+  ros__parameters:
+    target_color: "red"
+    min_contour_area: 300  # Gazebo中可适当调小
+    aspect_ratio_tolerance: 0.3  # 对形状要求宽松些

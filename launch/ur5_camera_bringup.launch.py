@@ -32,7 +32,7 @@ def launch_setup(context, *args, **kwargs):
 
     # 固定初始位置文件路径
     initial_positions_file = PathJoinSubstitution(
-        [FindPackageShare("ur_description"), "config", "initial_positions.yaml"]
+        [FindPackageShare("vision_grasp_demo"), "config", "initial_positions.yaml"]
     )
 
     # 固定RViz配置文件路径
@@ -125,6 +125,45 @@ def launch_setup(context, *args, **kwargs):
         output="screen",
     )
 
+    # Spawn red box model
+    gazebo_spawn_red_box = Node(
+        package="gazebo_ros",
+        executable="spawn_entity.py",
+        name="spawn_red_box",
+        arguments=[
+            "-entity", "red_box",
+            "-file", PathJoinSubstitution([
+                FindPackageShare("vision_grasp_demo"), "models", "red_box", "model.sdf"
+            ]),
+            "-x", "0.8",
+            "-y", "0.3",
+            "-z", "0.05"  # 放置在地面上方一点，避免与地面碰撞
+        ],
+        output="screen",
+    )
+
+    # Object detection node
+    object_detector_node = Node(
+        package="vision_grasp_demo",
+        executable="object_detector.py",
+        name="object_detector",
+        output="screen",
+        parameters=[
+            PathJoinSubstitution([
+                FindPackageShare("vision_grasp_demo"), "config", "detection_params.yaml"
+            ])
+        ]
+    )
+
+    # RQT Image View node for debugging
+    rqt_image_view_node = Node(
+        package="rqt_image_view",
+        executable="rqt_image_view",
+        name="rqt_image_view",
+        arguments=["/debug/detection"],
+        output="screen"
+    )
+
     nodes_to_start = [
         robot_state_publisher_node,
         joint_state_broadcaster_spawner,
@@ -133,6 +172,9 @@ def launch_setup(context, *args, **kwargs):
         initial_joint_controller_spawner_started,
         gazebo,
         gazebo_spawn_robot,
+        gazebo_spawn_red_box,  # 添加红盒子生成节点
+        object_detector_node,   # 添加物体检测节点
+        rqt_image_view_node,    # 添加图像查看节点
     ]
 
     return nodes_to_start
