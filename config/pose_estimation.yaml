@@ -1,0 +1,6 @@
+pose_estimator:
+  ros__parameters:
+    object_height: 0.05  # 物体中心距离桌面的高度（单位：米）
+    preset_depth: 1.293  # 预设深度值（相机到物体的距离，单位：米）
+    camera_frame: "camera_link_optical"  # 摄像头光学帧名称
+    target_frame: "base_link"  # 目标坐标系

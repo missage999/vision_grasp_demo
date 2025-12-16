@@ -164,6 +164,17 @@ def launch_setup(context, *args, **kwargs):
         output="screen"
     )
 
+    # Pose estimation node
+    pose_estimator_node = Node(
+        package='vision_grasp_demo',
+        executable='pose_estimator.py',
+        name='pose_estimator',
+        output='screen',
+        parameters=[PathJoinSubstitution([
+            FindPackageShare('vision_grasp_demo'), 'config', 'pose_estimation.yaml'
+        ])]
+    )
+
     nodes_to_start = [
         robot_state_publisher_node,
         joint_state_broadcaster_spawner,
@@ -175,6 +186,8 @@ def launch_setup(context, *args, **kwargs):
         gazebo_spawn_red_box,  # 添加红盒子生成节点
         object_detector_node,   # 添加物体检测节点
         rqt_image_view_node,    # 添加图像查看节点
+        # Add pose estimator node
+        pose_estimator_node,
     ]
 
     return nodes_to_start

@@ -3,6 +3,7 @@ import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
+from geometry_msgs.msg import PoseStamped
 import cv2
 import numpy as np
 
@@ -32,6 +33,9 @@ class ObjectDetector(Node):
         
         # CvBridge
         self.bridge = CvBridge()
+        
+        # 创建发布者：发布像素坐标
+        self.pixel_pose_pub = self.create_publisher(PoseStamped, '/detection/object_pose_pixel', 10)
         
         # 订阅摄像头图像
         self.image_sub = self.create_subscription(
@@ -66,6 +70,16 @@ class ObjectDetector(Node):
                     f"检测到物体: 中心={detection['center']}, "
                     f"尺寸={detection['size']}, 置信度={detection['confidence']:.2f}"
                 )
+                
+                # 新增：发布像素坐标
+                pixel_msg = PoseStamped()
+                pixel_msg.header.frame_id = 'camera_optical_frame'
+                pixel_msg.header.stamp = self.get_clock().now().to_msg()
+                pixel_msg.pose.position.x = float(detection['center'][0])
+                pixel_msg.pose.position.y = float(detection['center'][1])
+                pixel_msg.pose.position.z = 0.0  # 像素坐标无深度
+                
+                self.pixel_pose_pub.publish(pixel_msg)
             
             # 发布调试图像
             debug_msg = self.bridge.cv2_to_imgmsg(cv_image, encoding="bgr8")

@@ -10,6 +10,7 @@ find_package(ament_cmake REQUIRED)
 # 创建可执行脚本
 install(PROGRAMS
   src/object_detector.py
+  src/pose_estimator.py
   DESTINATION lib/${PROJECT_NAME}
 )
 

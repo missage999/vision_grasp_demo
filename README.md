@@ -33,6 +33,7 @@
 - [x] URDF模型文件精简
 - [x] 相机模型集成
 - [x] 图像处理与目标识别算法
+- [x] 位姿估计 + 手眼标定简化版
 - [ ] 抓取路径规划算法
 - [ ] 完整闭环测试
 
@@ -112,7 +113,7 @@ wrist_3_joint: 0.7854        # 腕部第三关节（转45度）
 ```
 
 **调整目的**：
-1. 改善视野：末端向下倾斜30度，便于观察工作台面
+1. 改善视野：末端向下倾斜45度，便于观察工作台面
 2. 优化抓取：确保物体以正确角度进入摄像头视野
 3. 扩大工作范围：在机械臂长度限制内最大化有效区域
 
@@ -199,6 +200,43 @@ ros2 run gazebo_ros spawn_entity.py \
 
 ---
 
+## 位姿估计流程与坐标系分析
+完整手眼标定需9点法，项目周期不允许。采用"预设高度+静态TF"的轻量化方案：
+### 总体流程
+1. **物体识别**：`object_detector.py`发布像素坐标到`/detection/object_pose_pixel`
+2. **位姿估计**：`pose_estimator.py`订阅像素坐标，通过`CameraInfo`获取内参，用光轴距离Zc反投影到相机坐标系
+3. **TF变换**：查询`camera_link_optical`到`base_link`的变换，将相机坐标转为基座坐标
+4. **发布结果**：发布`/detection/object_pose_3d`，供MoveIt!抓取使用
+
+### 坐标系配置
+- **red_box位置**：启动文件中设置为X=0.8, Y=0.3, Z=0.05
+- **相机位置**：通过TF查询相机在base_link下的位姿
+  ```bash
+  ros2 run tf2_ros tf2_echo base_link camera_link_optical
+  ```
+  
+  示例输出：
+  ```
+  At time 1101.270000000
+  - Translation: [0.001, 0.263, 1.079]
+  - Rotation: in Quaternion (xyzw) [0.654, -0.653, 0.270, -0.270]
+  - Rotation: in RPY (radian) [-2.358, -0.000, -1.571]
+  - Rotation: in RPY (degree) [-135.092, -0.000, -89.995]
+  ```
+
+### 相机姿态分析
+注意我们的相机是倾斜45度的，这影响了深度计算：
+
+**深度计算公式**：
+```
+Zc = (P_box - P_camera) • Z_axis_camera，结果为1.293
+```
+其中：
+- • = 向量点积
+- Z_axis_camera = 相机Z轴在base_link下的单位向量
+
 ## 相关资源
 - [object_detector.py代码讲解](https://www.kimi.com/share/19af9378-ee82-82e4-8000-0000ef68aae6)
 - [Python包安装说明](https://www.kimi.com/share/19af9183-a0a2-8f96-8000-00005849610e)
+- [四元数和万向死锁](https://chat.deepseek.com/share/13faqgv85djp8nbebu)
+- [成像模型与坐标变换](点击链接查看和 Kimi 的对话 https://www.kimi.com/share/19b22fde-44b2-8ce4-8000-00006ee1502d)
