@@ -1,0 +1,185 @@
+<?xml version="1.0"?>
+<robot name="ur">
+  <!-- ========== 必须包含 world link ========== -->
+  <link name="world"/>
+
+  <!-- ========== 核心连杆链（仅保留有视觉/碰撞的） ========== -->
+  <link name="base_link_inertia">
+    <visual>
+      <origin rpy="0 0 3.14159" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://ur_description/meshes/ur5e/visual/base.dae"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin rpy="0 0 3.14159" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://ur_description/meshes/ur5e/collision/base.stl"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <link name="shoulder_link">
+    <visual>
+      <origin rpy="0 0 3.14159" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://ur_description/meshes/ur5e/visual/shoulder.dae"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin rpy="0 0 3.14159" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://ur_description/meshes/ur5e/collision/shoulder.stl"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <link name="upper_arm_link">
+    <visual>
+      <origin rpy="1.5708 0 -1.5708" xyz="0 0 0.138"/>
+      <geometry>
+        <mesh filename="package://ur_description/meshes/ur5e/visual/upperarm.dae"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin rpy="1.5708 0 -1.5708" xyz="0 0 0.138"/>
+      <geometry>
+        <mesh filename="package://ur_description/meshes/ur5e/collision/upperarm.stl"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <link name="forearm_link">
+    <visual>
+      <origin rpy="1.5708 0 -1.5708" xyz="0 0 0.007"/>
+      <geometry>
+        <mesh filename="package://ur_description/meshes/ur5e/visual/forearm.dae"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin rpy="1.5708 0 -1.5708" xyz="0 0 0.007"/>
+      <geometry>
+        <mesh filename="package://ur_description/meshes/ur5e/collision/forearm.stl"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <link name="wrist_1_link">
+    <visual>
+      <origin rpy="1.5708 0 0" xyz="0 0 -0.127"/>
+      <geometry>
+        <mesh filename="package://ur_description/meshes/ur5e/visual/wrist1.dae"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin rpy="1.5708 0 0" xyz="0 0 -0.127"/>
+      <geometry>
+        <mesh filename="package://ur_description/meshes/ur5e/collision/wrist1.stl"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <link name="wrist_2_link">
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 -0.0997"/>
+      <geometry>
+        <mesh filename="package://ur_description/meshes/ur5e/visual/wrist2.dae"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 -0.0997"/>
+      <geometry>
+        <mesh filename="package://ur_description/meshes/ur5e/collision/wrist2.stl"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <link name="wrist_3_link">
+    <visual>
+      <origin rpy="1.5708 0 0" xyz="0 0 -0.0989"/>
+      <geometry>
+        <mesh filename="package://ur_description/meshes/ur5e/visual/wrist3.dae"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin rpy="1.5708 0 0" xyz="0 0 -0.0989"/>
+      <geometry>
+        <mesh filename="package://ur_description/meshes/ur5e/collision/wrist3.stl"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <link name="camera_link">
+    <visual>
+      <geometry><box size="0.02 0.02 0.02"/></geometry>
+      <material name="red"><color rgba="1 0 0 1"/></material>
+    </visual>
+    <collision>
+      <geometry><box size="0.02 0.02 0.02"/></geometry>
+    </collision>
+  </link>
+
+  <!-- ========== 关节链（移除所有空 link 关节） ========== -->
+  <joint name="base_joint" type="fixed">
+    <parent link="world"/>
+    <child link="base_link_inertia"/>
+    <origin xyz="0 0 0" rpy="0 0 3.14159"/>
+  </joint>
+
+  <joint name="shoulder_pan_joint" type="revolute">
+    <parent link="base_link_inertia"/>
+    <child link="shoulder_link"/>
+    <origin xyz="0 0 0.1625" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="150.0" lower="-6.28" upper="6.28" velocity="3.14"/>
+  </joint>
+
+  <joint name="shoulder_lift_joint" type="revolute">
+    <parent link="shoulder_link"/>
+    <child link="upper_arm_link"/>
+    <origin xyz="0 0 0" rpy="1.5708 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="150.0" lower="-6.28" upper="6.28" velocity="3.14"/>
+  </joint>
+
+  <joint name="elbow_joint" type="revolute">
+    <parent link="upper_arm_link"/>
+    <child link="forearm_link"/>
+    <origin xyz="-0.425 0 0" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="150.0" lower="-3.14" upper="3.14" velocity="3.14"/>
+  </joint>
+
+  <joint name="wrist_1_joint" type="revolute">
+    <parent link="forearm_link"/>
+    <child link="wrist_1_link"/>
+    <origin xyz="-0.3922 0 0.1333" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="28.0" lower="-6.28" upper="6.28" velocity="3.14"/>
+  </joint>
+
+  <joint name="wrist_2_joint" type="revolute">
+    <parent link="wrist_1_link"/>
+    <child link="wrist_2_link"/>
+    <origin xyz="0 -0.0997 0" rpy="1.5708 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="28.0" lower="-6.28" upper="6.28" velocity="3.14"/>
+  </joint>
+
+  <joint name="wrist_3_joint" type="revolute">
+    <parent link="wrist_2_link"/>
+    <child link="wrist_3_link"/>
+    <origin xyz="0 0.0996 0" rpy="1.5708 3.14159 3.14159"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="28.0" lower="-6.28" upper="6.28" velocity="3.14"/>
+  </joint>
+
+  <joint name="camera_joint" type="fixed">
+    <parent link="wrist_3_link"/>
+    <child link="camera_link"/>
+    <origin xyz="0 0 0.03" rpy="1.5708 0 0"/>
+  </joint>
+
+  <!-- ========== 材质定义 ========== -->
+  <material name="red"><color rgba="1 0 0 1"/></material>
+</robot>

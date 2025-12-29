@@ -11,6 +11,8 @@ find_package(ament_cmake REQUIRED)
 install(PROGRAMS
   src/object_detector.py
   src/pose_estimator.py
+  src/grasp_controller.py
+  src/main_grasp_demo.py
   DESTINATION lib/${PROJECT_NAME}
 )
 

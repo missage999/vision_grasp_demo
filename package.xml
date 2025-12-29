@@ -9,7 +9,14 @@
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
+  <depend>rclpy</depend>
   <depend>geometry_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>cv_bridge</depend>
+  <depend>tf2_ros</depend>
+  <depend>moveit_core</depend>
+  <depend>moveit_msgs</depend>
+  <depend>shape_msgs</depend>
   <depend>ur_description</depend>
   <depend>ur_simulation_gazebo</depend>
   <depend>robot_state_publisher</depend>
@@ -20,8 +27,6 @@
   <depend>joint_trajectory_controller</depend>
   <depend>ur_controllers</depend>
   <depend>joint_state_broadcaster</depend>
-  <depend>sensor_msgs</depend>
-  <depend>cv_bridge</depend>
   <exec_depend>python3-opencv</exec_depend>
 
   <export>
