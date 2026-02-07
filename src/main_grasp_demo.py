@@ -16,7 +16,25 @@ class GraspDemo(Node):
         
         # 创建GraspController客户端（简化：直接实例化）
         from grasp_controller import GraspController
+        
+        # 加载配置文件参数
+        self.declare_parameter('planning_group', 'ur_manipulator')
+        self.declare_parameter('pre_grasp_height', 0.2)
+        self.declare_parameter('grasp_height', 0.1)
+        self.declare_parameter('velocity_scaling_factor', 0.3)
+        self.declare_parameter('acceleration_scaling_factor', 0.3)
+        
+        # 创建 GraspController 实例
         self.controller = GraspController()
+        
+        # 设置参数（如果配置文件加载了，这些值会被覆盖）
+        self.controller.set_parameters([
+            rclpy.parameter.Parameter('planning_group', rclpy.Parameter.Type.STRING, self.get_parameter('planning_group').value),
+            rclpy.parameter.Parameter('pre_grasp_height', rclpy.Parameter.Type.DOUBLE, self.get_parameter('pre_grasp_height').value),
+            rclpy.parameter.Parameter('grasp_height', rclpy.Parameter.Type.DOUBLE, self.get_parameter('grasp_height').value),
+            rclpy.parameter.Parameter('velocity_scaling_factor', rclpy.Parameter.Type.DOUBLE, self.get_parameter('velocity_scaling_factor').value),
+            rclpy.parameter.Parameter('acceleration_scaling_factor', rclpy.Parameter.Type.DOUBLE, self.get_parameter('acceleration_scaling_factor').value),
+        ])
         
         self.get_logger().info('GraspDemo主循环已启动 - 等待物体位姿...')
     

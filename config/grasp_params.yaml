@@ -1,5 +1,7 @@
 grasp_controller:
   ros__parameters:
-    planning_group: "manipulator"
+    planning_group: "ur_manipulator"
     pre_grasp_height: 0.2  # 预抓取高度（米）
     grasp_height: 0.1      # 抓取高度
+    velocity_scaling_factor: 0.3      # 速度缩放因子 (0.1-1.0)
+    acceleration_scaling_factor: 0.3  # 加速度缩放因子 (0.1-1.0)

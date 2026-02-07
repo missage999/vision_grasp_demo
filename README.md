@@ -359,4 +359,4 @@ pose.orientation描述的是tool0相对于base_link的最终姿态，与URDF中�
 - [官方ur_sim_moveit文件和项目解析](https://www.kimi.com/share/19b37bab-3602-85cc-8000-00009fb6f73c)
 - [moveit抓取详解](https://www.kimi.com/share/19b64b71-3c72-8412-8000-000069464df5)
 - [从moveit setup assistant生成的启动流程](https://www.kimi.com/share/19b64d3d-5c92-88f9-8000-0000c9d1af37)
-- [MoveIt!抓取 + 系统集成](点击链接查看和 Kimi 的对话 https://www.kimi.com/share/19b78837-b622-8600-8000-00006c691eb7)
+- [MoveIt!抓取 + 系统集成](https://www.kimi.com/share/19b78837-b622-8600-8000-00006c691eb7)
